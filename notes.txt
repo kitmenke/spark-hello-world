@@ -1,0 +1,8 @@
+Start netcat server:
+nc -lk 9999
+
+Delete everything from the collection:
+curl "http://localhost:8983/solr/gettingstarted/update?commit=true" -H "Content-Type: text/xml" --data-binary '<delete><query>*:*</query></delete>'
+
+Watch the top words
+watch -d "curl 'http://localhost:8983/solr/gettingstarted/select?q=*:*&sort=count_l%20desc'"
