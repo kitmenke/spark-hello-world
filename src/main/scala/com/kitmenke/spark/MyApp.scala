@@ -5,7 +5,7 @@ import java.util.{Date, UUID}
 import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient
 import org.apache.solr.common.SolrInputDocument
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.{SparkConf, SparkContext}
 
 //https://github.com/lucidworks/banana/archive/v1.6.20.tar.gz
 //https://hub.docker.com/_/solr/
@@ -16,11 +16,12 @@ object MyApp {
 
   def main(args: Array[String]): Unit = {
     try {
-      val spark = SparkSession.builder().appName(jobName).master("local[1]").getOrCreate()
-      val rdd = spark.sparkContext.textFile("/home/kit/Downloads/pg50133.txt")
+      val conf = new SparkConf().setAppName(jobName).setMaster("local[1]")
+      val spark = new SparkContext(conf)
+      val rdd = spark.textFile("/home/kit/Downloads/pg50133.txt")
       val counts = rdd.flatMap(splitSentenceIntoWords)
         .map(word => (word, 1))
-        .reduceByKey((a,b) => a + b)
+        .reduceByKey((a, b) => a + b)
         .sortBy(t => t._2, ascending = false)
       counts.foreachPartition((iter: Iterator[(String, Int)]) => {
         val connection = new ConcurrentUpdateSolrClient.Builder("http://localhost:8983/solr/gettingstarted").build()
@@ -30,7 +31,8 @@ object MyApp {
           doc.addField("count_l", count)
           doc.addField("last_updated_dt", new Date())
           connection.add(doc)
-        }}
+        }
+        }
         connection.commit()
         connection.close()
       })
