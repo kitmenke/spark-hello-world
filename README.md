@@ -161,3 +161,41 @@ For Hortonwork's distribution of Hadoop, add the following to your pom.xml
             <url>http://repo.hortonworks.com/content/groups/public</url>
         </repository>
     </repositories>
+
+# Issues
+
+Adding kinesis library resulted in this error when you try to run it locally.
+
+
+```
+Caused by: java.lang.NoSuchMethodError: org.apache.http.conn.ssl.SSLConnectionSocketFactory.<init>(Ljavax/net/ssl/SSLContext;Ljavax/net/ssl/HostnameVerifier;)V
+    at com.amazonaws.http.conn.ssl.SdkTLSSocketFactory.<init>(SdkTLSSocketFactory.java:56)
+    at com.amazonaws.http.apache.client.impl.ApacheConnectionManagerFactory.getPreferredSocketFactory(ApacheConnectionManagerFactory.java:91)
+    at com.amazonaws.http.apache.client.impl.ApacheConnectionManagerFactory.create(ApacheConnectionManagerFactory.java:65)
+    at com.amazonaws.http.apache.client.impl.ApacheConnectionManagerFactory.create(ApacheConnectionManagerFactory.java:58)
+    at com.amazonaws.http.apache.client.impl.ApacheHttpClientFactory.create(ApacheHttpClientFactory.java:51)
+    at com.amazonaws.http.apache.client.impl.ApacheHttpClientFactory.create(ApacheHttpClientFactory.java:39)
+    at com.amazonaws.http.AmazonHttpClient.<init>(AmazonHttpClient.java:319)
+    at com.amazonaws.http.AmazonHttpClient.<init>(AmazonHttpClient.java:303)
+    at com.amazonaws.AmazonWebServiceClient.<init>(AmazonWebServiceClient.java:164)
+    at com.amazonaws.AmazonWebServiceClient.<init>(AmazonWebServiceClient.java:153)
+    at com.amazonaws.services.kinesis.AmazonKinesisClient.<init>(AmazonKinesisClient.java:221)
+    at com.amazonaws.services.kinesis.AmazonKinesisClient.<init>(AmazonKinesisClient.java:200)
+    at com.amazonaws.services.kinesis.clientlibrary.lib.worker.Worker.<init>(Worker.java:130)
+    at com.amazonaws.services.kinesis.clientlibrary.lib.worker.Worker.<init>(Worker.java:114)
+    at org.apache.spark.streaming.kinesis.KinesisReceiver.onStart(KinesisReceiver.scala:174)
+    at org.apache.spark.streaming.receiver.ReceiverSupervisor.startReceiver(ReceiverSupervisor.scala:149)
+    at org.apache.spark.streaming.receiver.ReceiverSupervisor.start(ReceiverSupervisor.scala:131)
+    at org.apache.spark.streaming.scheduler.ReceiverTracker$ReceiverTrackerEndpoint$$anonfun$9.apply(ReceiverTracker.scala:607)
+    at org.apache.spark.streaming.scheduler.ReceiverTracker$ReceiverTrackerEndpoint$$anonfun$9.apply(ReceiverTracker.scala:597)
+    at org.apache.spark.SparkContext$$anonfun$34.apply(SparkContext.scala:2173)
+    at org.apache.spark.SparkContext$$anonfun$34.apply(SparkContext.scala:2173)
+    at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:87)
+    at org.apache.spark.scheduler.Task.run(Task.scala:108)
+    at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:335)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+    at java.lang.Thread.run(Thread.java:748)
+```
+
+The issue is that the versions of httpclient and httpcore used by Amazon's library conflicts with the one loaded in spark-cores.
