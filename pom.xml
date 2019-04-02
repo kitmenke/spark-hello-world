@@ -131,6 +131,16 @@
             <version>${spark.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_${scala.compat.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_${scala.compat.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.databricks</groupId>
             <artifactId>spark-csv_${scala.compat.version}</artifactId>
             <version>1.5.0</version>
@@ -158,6 +168,12 @@
             <groupId>org.scalamock</groupId>
             <artifactId>scalamock_${scala.compat.version}</artifactId>
             <version>4.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.holdenkarau</groupId>
+            <artifactId>spark-testing-base_${scala.compat.version}</artifactId>
+            <version>${spark.version}_0.11.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
