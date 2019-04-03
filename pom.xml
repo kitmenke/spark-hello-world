@@ -97,6 +97,18 @@
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>1.11.530</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- Scala dependencies -->
         <dependency>
@@ -150,6 +162,15 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-kinesis-asl_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
+        </dependency>
+        <!-- AWS -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-comprehend</artifactId>
         </dependency>
         <!-- Solr dependencies -->
         <dependency>
