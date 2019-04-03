@@ -23,6 +23,17 @@ class KinesisAppTests extends FunSpec with SharedSparkContext with RDDComparison
       //assertRDDEquals(expectedRdd, actualRdd)
       assert(None === compareRDD(expectedRdd, actualRdd))
     }
+
+    it("should be able to determine sentiment for some messages") {
+      val good = TwilioMessage("Everything is awesome!", "", "", "")
+      val bad = TwilioMessage("This is the worst.", "", "", "")
+      val data = List(good, bad)
+      val rdd = sc.parallelize(data)
+      val actualRdd = KinesisApp.addSentiment(rdd)
+      val expectedData = List((good, "POSITIVE"), (bad, "NEGATIVE"))
+      val expectedRdd = sc.parallelize(expectedData)
+      assert(None === compareRDD(expectedRdd, actualRdd))
+    }
   }
 
 }

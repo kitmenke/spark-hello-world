@@ -3,7 +3,7 @@ package com.kitmenke.spark.streaming
 import java.util.{Date, UUID}
 
 import com.amazonaws.services.comprehend.AmazonComprehendClientBuilder
-import com.amazonaws.services.comprehend.model.BatchDetectSentimentRequest
+import com.amazonaws.services.comprehend.model.{BatchDetectSentimentRequest, LanguageCode}
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.apache.log4j.Logger
@@ -66,17 +66,20 @@ object KinesisApp {
 
   def addSentiment(rdd: RDD[TwilioMessage]): RDD[(TwilioMessage, String)] = {
     rdd.mapPartitions(iter => {
-      val client = AmazonComprehendClientBuilder.defaultClient()
+      val client = AmazonComprehendClientBuilder.standard()
+        .withRegion("us-east-1")
+        .build()
       try {
-        iter
+        val result = iter
           .grouped(25)
           .flatMap(messages => {
-            val request = new BatchDetectSentimentRequest()
+            val request = new BatchDetectSentimentRequest().withLanguageCode(LanguageCode.En)
             import scala.collection.JavaConversions._
             request.withTextList(messages.map(m => m.body))
             val result = client.batchDetectSentiment(request)
             messages.zip(result.getResultList.map(res => res.getSentiment))
-          })
+          }).toList
+        result.iterator
       } finally {
         client.shutdown()
       }
