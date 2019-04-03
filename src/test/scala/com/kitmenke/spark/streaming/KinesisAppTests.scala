@@ -20,7 +20,6 @@ class KinesisAppTests extends FunSpec with SharedSparkContext with RDDComparison
         TwilioMessage("How are you?", "20166", "STERLING", "VA")
       )
       val expectedRdd = sc.parallelize(expectedData)
-      //assertRDDEquals(expectedRdd, actualRdd)
       assert(None === compareRDD(expectedRdd, actualRdd))
     }
 
