@@ -1,6 +1,9 @@
 # Kit excluding entire .idea folder
 .idea
 
+# Kit excluding local hive metastore_db
+metastore_db/
+
 # Created by https://www.gitignore.io/api/maven,scala,intellij
 
 ### Intellij ###

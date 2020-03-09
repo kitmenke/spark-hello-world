@@ -22,7 +22,7 @@ object MyApp {
         .map(word => (word, 1))
         .reduceByKey((a,b) => a + b)
         .sortBy(t => t._2, ascending = false)
-      counts.foreachPartition((iter: Iterator[(String, Int)]) => {
+      /*counts.foreachPartition((iter: Iterator[(String, Int)]) => {
         val connection = new ConcurrentUpdateSolrClient.Builder("http://localhost:8983/solr/gettingstarted").build()
         iter.foreach { case (word, count) => {
           val doc = new SolrInputDocument
@@ -33,7 +33,8 @@ object MyApp {
         }}
         connection.commit()
         connection.close()
-      })
+      })*/
+      counts.foreach(println)
     } catch {
       case e: Exception => LOG.error(s"$jobName error in main", e)
     }
