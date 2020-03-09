@@ -11,9 +11,9 @@
 
     <properties>
         <jdk.version>1.8</jdk.version>
-        <scala.compat.version>2.11</scala.compat.version>
-        <scala.version>2.11.8</scala.version>
-        <spark.version>2.2.0</spark.version>
+        <scala.compat.version>2.12</scala.compat.version>
+        <scala.version>2.12.10</scala.version>
+        <spark.version>2.4.5</spark.version>
     </properties>
 
     <build>
@@ -32,7 +32,7 @@
                 <!-- Enable the scala maven plugin, see https://github.com/davidB/scala-maven-plugin for more info -->
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>4.3.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -97,18 +97,6 @@
         </plugins>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-bom</artifactId>
-                <version>1.11.530</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- Scala dependencies -->
         <dependency>
@@ -121,26 +109,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
-            <!-- Added due to conflicts with spark-streaming-kinesis-asl -->
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-httpclient</groupId>
-                    <artifactId>commons-httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
@@ -151,26 +119,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.databricks</groupId>
-            <artifactId>spark-csv_${scala.compat.version}</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <!-- Spark streaming -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming-kinesis-asl_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        <!-- AWS -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-comprehend</artifactId>
         </dependency>
         <!-- Solr dependencies -->
         <dependency>
@@ -194,7 +142,7 @@
         <dependency>
             <groupId>com.holdenkarau</groupId>
             <artifactId>spark-testing-base_${scala.compat.version}</artifactId>
-            <version>${spark.version}_0.11.0</version>
+            <version>${spark.version}_0.14.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
