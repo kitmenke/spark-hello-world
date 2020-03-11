@@ -4,7 +4,7 @@ import org.apache.log4j.Logger
 import org.apache.spark.sql.SparkSession
 
 object MyApp {
-  lazy val LOG = Logger.getLogger(this.getClass)
+  lazy val logger: Logger = Logger.getLogger(this.getClass)
   val jobName = "MyApp"
 
   def main(args: Array[String]): Unit = {
@@ -27,7 +27,7 @@ object MyApp {
         .sortBy(t => t._2, ascending = false)
       counts.foreach(println)
     } catch {
-      case e: Exception => LOG.error(s"$jobName error in main", e)
+      case e: Exception => logger.error(s"$jobName error in main", e)
     }
   }
 

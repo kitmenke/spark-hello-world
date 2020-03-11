@@ -120,11 +120,11 @@
             <artifactId>spark-hive_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
-        <!-- Solr dependencies -->
+        <!-- Streaming dependencies -->
         <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>7.7.1</version>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql-kafka-0-10_${scala.compat.version}</artifactId>
+            <version>${spark.version}</version>
         </dependency>
         <!-- Test dependencies -->
         <dependency>
