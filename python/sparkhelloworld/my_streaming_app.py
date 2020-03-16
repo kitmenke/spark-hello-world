@@ -3,9 +3,6 @@
 
 """
 An example Pyspark Structured Streaming app that reads data from Kafka
-
-Run using:
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py
 """
 import findspark
 findspark.init()
@@ -45,7 +42,6 @@ if __name__ == "__main__":
         .option('startingOffsets', 'earliest') \
         .load() \
         .selectExpr('CAST(key AS STRING)', 'CAST(value AS STRING)')
-
 
     df.printSchema()
 
