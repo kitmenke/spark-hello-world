@@ -1,18 +1,17 @@
 import pytest
+from pyspark.sql import Row
+import sparkhelloworld
 
 pytestmark = pytest.mark.usefixtures("spark_context")
-def test_do_word_counts(spark_context):
-    """ test word couting
+
+
+def test_parse_json_and_sum_random_ints(spark_context):
+    """ test json parsing
     Args:
        spark_context: test fixture SparkContext
     """
-    test_input = [
-        ' hello spark ',
-        ' hello again spark spark'
-    ]
-
-    input_rdd = spark_context.parallelize(test_input, 1)
-    results = wordcount.do_word_counts(input_rdd)
-
-    expected_results = {'hello':2, 'spark':3, 'again':1}
-    assert results == expected_results
+    data = [Row(key=1, value="{ \"random-name\": \"Bob\", \"random-int\": 42 }"),
+        Row(key=1, value="{ \"random-name\": \"Mary\", \"random-int\": 100 }")]
+    df = spark_context.sparkContext.parallelize(data).toDF()
+    actual = sparkhelloworld.my_streaming_app.compute(df)
+    assert actual.collect()[0].s == 142

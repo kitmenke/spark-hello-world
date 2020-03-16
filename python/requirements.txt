@@ -1,2 +1,4 @@
 pyspark==2.4.5
 pytest
+pytest-watch
+findspark
