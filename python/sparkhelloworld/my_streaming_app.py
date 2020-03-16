@@ -5,7 +5,7 @@
 An example Pyspark Structured Streaming app that reads data from Kafka
 
 Run using:
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 spark-hello-world/my_streaming_app.py
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py
 """
 import findspark
 findspark.init()
@@ -15,7 +15,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json
 from pyspark.sql.functions import sum as spark_sum
 from pyspark.sql.types import *
-
 
 
 def compute(df):
@@ -35,6 +34,8 @@ if __name__ == "__main__":
         .appName("MyStreamingApp") \
         .getOrCreate()
 
+    spark.sparkContext.setLogLevel('WARN')
+
     # Create DataFrame with (key, value)
     df = spark \
         .readStream \
@@ -44,6 +45,8 @@ if __name__ == "__main__":
         .option('startingOffsets', 'earliest') \
         .load() \
         .selectExpr('CAST(key AS STRING)', 'CAST(value AS STRING)')
+
+
     df.printSchema()
 
     out = compute(df)
