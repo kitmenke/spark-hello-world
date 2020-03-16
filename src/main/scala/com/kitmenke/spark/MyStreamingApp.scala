@@ -38,10 +38,9 @@ object MyStreamingApp {
   }
 
   def compute(df: DataFrame): DataFrame = {
-    val schema = StructType(List(
-      StructField("random-name", StringType, nullable = true),
-      StructField("random-int", IntegerType, nullable = true)
-    ))
+    val schema = new StructType()
+      .add("random-name", StringType, nullable = true)
+      .add("random-int", IntegerType, nullable = true)
     df.select(from_json(df("value"), schema) as "js")
       .agg(sum("js.random-int") as "s")
   }
