@@ -7,25 +7,44 @@ An example Pyspark Structured Streaming app that reads data from Kafka
 import findspark
 findspark.init()
 
-import pyspark
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json
-from pyspark.sql.functions import sum as spark_sum
+from pyspark.sql.functions import *
 from pyspark.sql.types import *
+import sys
 
+
+schema = StructType() \
+    .add("marketplace", StringType(), nullable=True) \
+    .add("customer_id", IntegerType(), nullable=True) \
+    .add("review_id", StringType(), nullable=True) \
+    .add("product_id", StringType(), nullable=True) \
+    .add("product_parent", IntegerType(), nullable=True) \
+    .add("product_title", StringType(), nullable=True) \
+    .add("product_category", StringType(), nullable=True) \
+    .add("star_rating", IntegerType(), nullable=True) \
+    .add("helpful_votes", IntegerType(), nullable=True) \
+    .add("total_votes", IntegerType(), nullable=True) \
+    .add("vine", StringType(), nullable=True) \
+    .add("verified_purchase", StringType(), nullable=True) \
+    .add("review_headline", StringType(), nullable=True) \
+    .add("review_body", StringType(), nullable=True) \
+    .add("review_date", TimestampType(), nullable=True)
 
 def compute(df):
     """
-    Parse json and sum all the random-ints
+    Parse json and get average star rating
     :type df: DataFrame
     """
-    schema = StructType([StructField("random-string", StringType(), nullable=True),
-                         StructField("random-int", IntegerType(), nullable=True)])
+
     return df.select(from_json(df.value, schema).alias("js")) \
-        .agg(spark_sum("js.random-int").alias("s"))
+        .agg(round(avg("js.star_rating"), 2).alias("avg_star_rating"))
 
 
 if __name__ == "__main__":
+    bootstrap_servers = sys.argv[1]
+    print("Connecting to kafka servers %s" % (bootstrap_servers))
+
     spark = SparkSession \
         .builder \
         .appName("MyStreamingApp") \
@@ -37,11 +56,10 @@ if __name__ == "__main__":
     df = spark \
         .readStream \
         .format('kafka') \
-        .option('kafka.bootstrap.servers', 'localhost:9092') \
-        .option('subscribe', 'test') \
-        .option('startingOffsets', 'earliest') \
+        .option('kafka.bootstrap.servers', bootstrap_servers) \
+        .option('subscribe', 'reviews') \
         .load() \
-        .selectExpr('CAST(key AS STRING)', 'CAST(value AS STRING)')
+        .selectExpr('CAST(value AS STRING)')
 
     df.printSchema()
 
@@ -51,6 +69,7 @@ if __name__ == "__main__":
     query = out.writeStream \
         .outputMode('complete') \
         .format('console') \
+        .trigger(processingTime='5 seconds') \
         .start()
 
     query.awaitTermination()

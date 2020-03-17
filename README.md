@@ -22,6 +22,37 @@ Open the project in IntelliJ:
  
 Give IntelliJ a few minutes to download all of the project dependencies. You'll see the progress bar in the bottom right going crazy.
 
+# Running the Structured Streaming App
+
+The structured streaming app requires a Kafka cluster. The data on the topic is from the [Amazon Customer Reviews Dataset](https://registry.opendata.aws/amazon-reviews/)
+and looks like the following example:
+
+```json
+{
+  "marketplace": "US",
+  "customer_id": 1,
+  "review_id": "R26ZK6XLDT8DDS",
+  "product_id": "B000L70MQO",
+  "product_parent": 216773674,
+  "product_title": "Product 1",
+  "product_category": "Toys",
+  "star_rating": 5,
+  "helpful_votes": 1,
+  "total_votes": 4,
+  "vine": "N",
+  "verified_purchase": "Y",
+  "review_headline": "Five Stars",
+  "review_body": "Cool.",
+  "review_date": "2015-01-12T00:00:00.000-06:00"
+}
+```
+
+Open up MyStreamingApp.scala from src/main/scala/com/kitmenke/spark.
+
+You will need to specify the Kafka bootstrap servers as the first argument.
+
+# Running the Batch App
+
 Open up MyApp.scala from src/main/scala/com/kitmenke/spark.
 
 Right click on MyApp and choose "Run MyApp" to run the Spark app locally. If all goes well, you should see the following output in the log:
