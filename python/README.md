@@ -2,6 +2,18 @@
 
 An example python pyspark Structured Streaming app with unit tests.
 
+- Must have Java 8 installed. *Java 11 will not work*.
+- Must have spark 2.4.5 installed.
+
+Set SPARK_HOME environment variable.
+
+```
+# For Mac
+export SPARK_HOME=/usr/local/Cellar/apache-spark/2.4.5/libexec/
+# For Linux
+export SPARK_HOME="/home/username/spark-2.4.5-bin-hadoop2.7"
+```
+
 To run the app, you must have installed Apache Spark 2.4.5 somewhere on your system.
 ```
 # install the dependencies
@@ -15,7 +27,6 @@ spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhe
 The tests use pytest.
 
 ```
-
 # run the tests once
 pytest
 ```
