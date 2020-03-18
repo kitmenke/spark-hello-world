@@ -18,8 +18,10 @@ To run the app, you must have installed Apache Spark 2.4.5 somewhere on your sys
 ```
 # install the dependencies
 make init
-# 
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py
+# set env var to your kafka bootstrap servers
+export BOOTSTRAP_SERVERS="localhost:9092"
+# run the app 
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py $BOOTSTRAP_SERVERS
 ```
 
 # Tests
