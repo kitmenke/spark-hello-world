@@ -3,15 +3,16 @@
 An example python pyspark Structured Streaming app with unit tests.
 
 - Must have Java 8 installed. *Java 11 will not work*.
-- Must have spark 2.4.5 installed.
+- Must have spark 2.4.5 installed ( https://spark.apache.org/downloads.html )
 
-Set SPARK_HOME environment variable.
+Set SPARK_HOME environment variable to where Spark is installed on your machine
 
 ```
-# For Mac
-export SPARK_HOME=/usr/local/Cellar/apache-spark/2.4.5/libexec/
-# For Linux
+# Example
 export SPARK_HOME="/home/username/spark-2.4.5-bin-hadoop2.7"
+
+# Example if used homebrew for installation
+export SPARK_HOME=/usr/local/Cellar/apache-spark/2.4.5/libexec/
 ```
 
 To run the app, you must have installed Apache Spark 2.4.5 somewhere on your system.
@@ -22,6 +23,19 @@ make init
 export BOOTSTRAP_SERVERS="localhost:9092"
 # run the app 
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py $BOOTSTRAP_SERVERS
+```
+
+To check that it's processing data, add the startingOffsets option to the `my_streaming_app.py` file and rerun your spark-submit job.
+```
+# Create DataFrame with (key, value)
+    df = spark \
+        .readStream \
+        .format('kafka') \
+        .option('kafka.bootstrap.servers', bootstrap_servers) \
+        .option('subscribe', 'reviews') \
+        .option("startingOffsets", "earliest") \
+        .load() \
+        .selectExpr('CAST(value AS STRING)')
 ```
 
 # Tests

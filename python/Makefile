@@ -1,10 +1,10 @@
 .PHONY: init
 init:
-	pip install -r requirements.txt
+	python -m pip install -r requirements.txt
 
 .PHONY: install
 init:
-	pip install .
+	python -m pip install .
 
 
 .PHONY: test
