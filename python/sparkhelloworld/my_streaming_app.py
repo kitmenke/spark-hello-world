@@ -12,11 +12,12 @@ from pyspark.sql.functions import from_json
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 import sys
+import happybase
 
 
 schema = StructType() \
     .add("marketplace", StringType(), nullable=True) \
-    .add("customer_id", IntegerType(), nullable=True) \
+    .add("customer_id", LongType(), nullable=True) \
     .add("review_id", StringType(), nullable=True) \
     .add("product_id", StringType(), nullable=True) \
     .add("product_parent", IntegerType(), nullable=True) \
@@ -31,14 +32,21 @@ schema = StructType() \
     .add("review_body", StringType(), nullable=True) \
     .add("review_date", TimestampType(), nullable=True)
 
-def compute(df):
-    """
-    Parse json and get average star rating
-    :type df: DataFrame
-    """
 
-    return df.select(from_json(df.value, schema).alias("js")) \
-        .agg(round(avg("js.star_rating"), 2).alias("avg_star_rating"))
+def enrich_hbase(customer_id):
+    HOST='quickstart.cloudera'
+    PORT=9090
+    TABLE_NAME=b'kit:users'
+    HBASE_CONNECTION = happybase.Connection(HOST, PORT)
+    HBASE_TABLE = HBASE_CONNECTION.table(TABLE_NAME)
+    print("Getting values for row key '{0}'".format(customer_id))
+    row = HBASE_TABLE.row(str(customer_id).encode('utf-8'))
+    print(row)
+    # copy stuff over
+    if b'f1:mail' in row:
+        return row[b'f1:mail'].decode('utf-8')
+    else:
+        return None
 
 
 if __name__ == "__main__":
@@ -47,7 +55,7 @@ if __name__ == "__main__":
 
     spark = SparkSession \
         .builder \
-        .appName("MyStreamingApp") \
+        .appName("KitsStreamingApp") \
         .getOrCreate()
 
     spark.sparkContext.setLogLevel('WARN')
@@ -58,16 +66,23 @@ if __name__ == "__main__":
         .format('kafka') \
         .option('kafka.bootstrap.servers', bootstrap_servers) \
         .option('subscribe', 'reviews') \
+        .option('maxOffsetsPerTrigger', 10) \
+        .option("startingOffsets", "earliest") \
         .load() \
         .selectExpr('CAST(value AS STRING)')
 
-    df.printSchema()
+    step1 = df.select(from_json(df.value, schema).alias("js")).select("js.*")
+    step1.printSchema()
+    
+    enrich_hbase_udf = udf(lambda id: enrich_hbase(id), StringType())
+    spark.udf.register("enrich_hbase_udf", enrich_hbase_udf)
 
-    out = compute(df)
+    out = step1.withColumn('mail', enrich_hbase_udf('customer_id'))
+    out.printSchema
 
     # Start running the query that prints the running counts to the console
     query = out.writeStream \
-        .outputMode('complete') \
+        .outputMode('append') \
         .format('console') \
         .trigger(processingTime='5 seconds') \
         .start()
