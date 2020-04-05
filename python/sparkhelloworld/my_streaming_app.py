@@ -82,19 +82,22 @@ if __name__ == "__main__":
         .load() \
         .selectExpr('CAST(value AS STRING)')
 
-    df = df.select(from_json(df.value, schema).alias("js")).select("js.*") \
-        .withColumn('current_tsp', current_timestamp())
+    df = df.select(from_json(df.value, schema).alias("raw")).selectExpr("raw.*") \
+        .withColumn('current_tsp', current_timestamp()) \
+        .withWatermark("current_tsp", "0 seconds")
+    df.printSchema
     
-    out = df.withWatermark("current_tsp", "5 seconds") \
-        .groupby("current_tsp") \
+    hbase_df = df.groupby("current_tsp") \
         .agg(collect_set("customer_id").alias("customer_ids")) \
-        .select(enrich_hbase_udf('customer_ids').alias("enriched"), "current_tsp") \
-        .select(explode("enriched").alias("enriched_map"), "current_tsp") \
-        .select("enriched_map.customer_id", "enriched_map.mail", "current_tsp")
+        .select(enrich_hbase_udf('customer_ids').alias("enriched")) \
+        .select(explode("enriched").alias("enriched_map")) \
+        .select("enriched_map.customer_id", "enriched_map.mail")
+
+    out = df.join(hbase_df, on="customer_id")
 
     # Start running the query that prints the running counts to the console
     query = out.writeStream \
-        .outputMode('update') \
+        .outputMode('append') \
         .format('console') \
         .trigger(processingTime='10 seconds') \
         .start()
