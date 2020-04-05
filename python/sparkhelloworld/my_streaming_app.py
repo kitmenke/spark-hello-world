@@ -3,13 +3,13 @@
 
 """
 An example Pyspark Structured Streaming app that reads data from Kafka
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py localhost:9092
 """
 import findspark
 findspark.init()
 
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json
-from pyspark.sql.functions import *
+from pyspark.sql import SparkSession, Row
+from pyspark.sql.functions import from_json, collect_set, udf, explode, current_timestamp
 from pyspark.sql.types import *
 import sys
 import happybase
@@ -33,20 +33,27 @@ schema = StructType() \
     .add("review_date", TimestampType(), nullable=True)
 
 
-def enrich_hbase(customer_id):
+enriched_schema = StructType() \
+    .add("customer_id", StringType(), nullable=True) \
+    .add("mail", StringType(), nullable=True)
+
+
+def enrich_hbase(customer_ids):
     HOST='quickstart.cloudera'
     PORT=9090
     TABLE_NAME=b'kit:users'
     HBASE_CONNECTION = happybase.Connection(HOST, PORT)
     HBASE_TABLE = HBASE_CONNECTION.table(TABLE_NAME)
-    print("Getting values for row key '{0}'".format(customer_id))
-    row = HBASE_TABLE.row(str(customer_id).encode('utf-8'))
-    print(row)
-    # copy stuff over
-    if b'f1:mail' in row:
-        return row[b'f1:mail'].decode('utf-8')
-    else:
-        return None
+    print("Getting values for {0} keys".format(len(customer_ids)))
+    keys = [str(cust_id).encode('utf-8') for cust_id in customer_ids]
+    rows = HBASE_TABLE.rows(keys)
+    result = []
+    for row in rows:
+        # row is a tuple that looks like
+        #(b'9005729', {b'f1:mail': b'sarahschaefer@yahoo.com'})
+        new_row = Row(customer_id=row[0].decode('utf-8'), mail=row[1][b'f1:mail'].decode('utf-8'))
+        result.append(new_row)
+    return result
 
 
 if __name__ == "__main__":
@@ -60,6 +67,10 @@ if __name__ == "__main__":
 
     spark.sparkContext.setLogLevel('WARN')
 
+    # register udf
+    enrich_hbase_udf = udf(lambda x: enrich_hbase(x), ArrayType(elementType=enriched_schema))
+    spark.udf.register("enrich_hbase_udf", enrich_hbase_udf)
+
     # Create DataFrame with (key, value)
     df = spark \
         .readStream \
@@ -71,20 +82,21 @@ if __name__ == "__main__":
         .load() \
         .selectExpr('CAST(value AS STRING)')
 
-    step1 = df.select(from_json(df.value, schema).alias("js")).select("js.*")
-    step1.printSchema()
+    df = df.select(from_json(df.value, schema).alias("js")).select("js.*") \
+        .withColumn('current_tsp', current_timestamp())
     
-    enrich_hbase_udf = udf(lambda id: enrich_hbase(id), StringType())
-    spark.udf.register("enrich_hbase_udf", enrich_hbase_udf)
-
-    out = step1.withColumn('mail', enrich_hbase_udf('customer_id'))
-    out.printSchema
+    out = df.withWatermark("current_tsp", "5 seconds") \
+        .groupby("current_tsp") \
+        .agg(collect_set("customer_id").alias("customer_ids")) \
+        .select(enrich_hbase_udf('customer_ids').alias("enriched"), "current_tsp") \
+        .select(explode("enriched").alias("enriched_map"), "current_tsp") \
+        .select("enriched_map.customer_id", "enriched_map.mail", "current_tsp")
 
     # Start running the query that prints the running counts to the console
     query = out.writeStream \
-        .outputMode('append') \
+        .outputMode('update') \
         .format('console') \
-        .trigger(processingTime='5 seconds') \
+        .trigger(processingTime='10 seconds') \
         .start()
 
     query.awaitTermination()

@@ -18,7 +18,7 @@ import sys
 import happybase
 
 
-schema = StructType() \
+enriched_schema = StructType() \
     .add("customer_id", StringType(), nullable=True) \
     .add("mail", StringType(), nullable=True)
 
