@@ -3,10 +3,10 @@
 
 """
 Get an hbase table in a dataframe
-org.apache.hbase.connectors.spark
-hbase-spark
-1.0.0
-spark-submit --packages org.apache.hbase.connectors.spark:hbase-spark:1.0.0,org.apache.hbase:hbase-common:2.2.3,org.apache.hbase:hbase-client:2.2.3,org.apache.hbase:hbase-shaded-mapreduce:2.2.3 sparkhelloworld/get_hbase_table.py
+
+Run this job using:
+spark-submit --files sparkhelloworld/hbase-site.xml --packages org.apache.hbase.connectors.spark:hbase-spark:1.0.0,org.apache.hbase:hbase-common:2.2.3,org.apache.hbase:hbase-client:2.2.3,org.apache.hbase:hbase-shaded-mapreduce:2.2.3 sparkhelloworld/get_hbase_table.py
+
 """
 import findspark
 findspark.init()
@@ -25,11 +25,13 @@ if __name__ == "__main__":
         .appName("KitGetHbaseTableAsDataframe") \
         .getOrCreate()
 
-    spark.sparkContext.setLogLevel('WARN')
-
+    #spark.sparkContext.setLogLevel('WARN')
+    # hbase.spark.use.hbasecontext = False to create a new configuration otherwise it tries to read from cache which is
+    #    null and results in a NPE
     df = spark.read.format('org.apache.hadoop.hbase.spark') \
-    .option("hbase.spark.use.hbasecontext", False) \
-    .option("hbase.zookeeper.quorum", "35.184.255.239:2181") \
+    .option('hbase.spark.use.hbasecontext', True) \
+    .option('hbase.spark.config.location', 'file:///home/kit/Code/spark-hello-world/python/sparkhelloworld/hbase-site.xml') \
+    .option('hbase.config.resources', 'file:///home/kit/Code/spark-hello-world/python/sparkhelloworld/hbase-site.xml') \
     .option('hbase.table','kit:users') \
     .option('hbase.columns.mapping', 'id STRING :key, mail STRING f1:mail') \
     .load()
