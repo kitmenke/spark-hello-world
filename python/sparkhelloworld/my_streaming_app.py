@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     spark = SparkSession \
         .builder \
-        .appName("KitsStreamingApp") \
+        .appName("MyStreamingApp") \
         .getOrCreate()
 
     spark.sparkContext.setLogLevel('WARN')
