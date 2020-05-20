@@ -26,7 +26,7 @@ class MyStreamingAppTests extends FunSuite with DataFrameSuiteBase {
 
     val result = input.select(sql.functions.from_json(input("value"), schema))
     result.printSchema()
-    result.show()
+    result.show(truncate = false)
   }
 
   test("should parse dates") {
