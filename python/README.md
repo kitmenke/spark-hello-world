@@ -23,6 +23,30 @@ export BOOTSTRAP_SERVERS="35.208.65.122:9092,34.68.16.1:9092,35.225.151.65:9092"
 # run the app 
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py $BOOTSTRAP_SERVERS
 ```
+# Hive
+
+```
+CREATE EXTERNAL TABLE reviews (
+marketplace STRING,
+customer_id BIGINT,
+review_id STRING,
+product_id STRING,
+product_parent INT,
+product_title STRING,
+product_category STRING,
+star_rating INT,
+helpful_votes INT,
+total_votes INT,
+vine STRING,
+verified_purchase STRING,
+review_headline STRING,
+review_body STRING,
+review_date TIMESTAMP,
+current_tsp TIMESTAMP
+)
+STORED AS PARQUET
+LOCATION '/user/kit/reviews';
+```
 
 # Tests
 

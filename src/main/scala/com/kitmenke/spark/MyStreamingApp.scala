@@ -34,6 +34,8 @@ object MyStreamingApp {
   def main(args: Array[String]): Unit = {
     try {
       val spark = SparkSession.builder().appName(jobName).master("local[*]").getOrCreate()
+      spark.conf.set("spark.hadoop.dfs.client.use.datanode.hostname", "true")
+      spark.conf.set("spark.hadoop.fs.defaultFS", "hdfs://quickstart.cloudera:8020")
       val bootstrapServers = args(0)
       val df = spark
         .readStream
