@@ -94,7 +94,25 @@ Congratulations! You just ran a Spark application!
 
 # Known Issues
 
-You may experience the following error:
+## MacOS can't assign requested address
+
+Problems running locally?
+
+```
+spark.conf.set("spark.driver.host", "localhost")
+```
+
+## Connecting to a single node cluster
+
+To write data to a single ndoe cluster, you'll need the following config:
+```
+spark.conf.set("spark.hadoop.dfs.client.use.datanode.hostname", "true")
+spark.conf.set("spark.hadoop.fs.defaultFS", "hdfs://quickstart.cloudera:8020")
+```
+
+## WinUtils
+
+You may experience the following error on Windows:
 ```
 2018-01-23 17:00:21 ERROR Shell:396 - Failed to locate the winutils binary in the hadoop binary path
 java.io.IOException: Could not locate executable null\bin\winutils.exe in the Hadoop binaries.

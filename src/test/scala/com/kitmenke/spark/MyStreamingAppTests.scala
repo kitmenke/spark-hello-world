@@ -3,6 +3,7 @@ package com.kitmenke.spark
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import org.scalatest.FunSuite
 
+
 class MyStreamingAppTests extends FunSuite with DataFrameSuiteBase {
   import sqlContext.implicits._
 
@@ -20,5 +21,16 @@ class MyStreamingAppTests extends FunSuite with DataFrameSuiteBase {
     actual.printSchema()
     actual.show()
     assertDataFrameEquals(actual, expected) // equal
+  }
+
+  test("should parse dates") {
+    // create some sample data to run through our program
+    val df = sc.parallelize(List[String]("20200401", "20200501", "20200601"))
+      .toDF("dates")
+    // using the to_date spark sql function, convert the string value into a
+    import org.apache.spark.sql.functions.to_date
+    val result = df.select(to_date(df("dates"), "yyyyMMdd"))
+    result.printSchema()
+    result.show()
   }
 }

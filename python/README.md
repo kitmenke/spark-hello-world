@@ -24,6 +24,30 @@ export BOOTSTRAP_SERVERS="localhost:9092"
 # run the app 
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.5 sparkhelloworld/my_streaming_app.py $BOOTSTRAP_SERVERS
 ```
+# Hive
+
+```
+CREATE EXTERNAL TABLE reviews (
+marketplace STRING,
+customer_id BIGINT,
+review_id STRING,
+product_id STRING,
+product_parent INT,
+product_title STRING,
+product_category STRING,
+star_rating INT,
+helpful_votes INT,
+total_votes INT,
+vine STRING,
+verified_purchase STRING,
+review_headline STRING,
+review_body STRING,
+review_date TIMESTAMP,
+current_tsp TIMESTAMP
+)
+STORED AS PARQUET
+LOCATION '/user/kit/reviews';
+```
 
 To check that it's processing data, add the startingOffsets option to the `my_streaming_app.py` file and rerun your spark-submit job.
 ```
