@@ -20,17 +20,12 @@ object MyBatchApp {
 
       val sentences = spark.read.csv("src/main/resources/sentences.txt").as[String]
 
-      val counts = sentences.flatMap(splitSentenceIntoWords)
-        .groupBy("value").count().sort(desc("count"))
+      //val counts = ???
 
-      counts.foreach(println(_))
+      //counts.foreach(wordCount=>println(wordCount))
     } catch {
       case e: Exception => logger.error(s"$jobName error in main", e)
     }
-  }
-
-  def splitSentenceIntoWords(sentence: String): Array[String] = {
-    sentence.split(" ").map(word => word.toLowerCase.replaceAll("[^a-z]", ""))
   }
 
 }

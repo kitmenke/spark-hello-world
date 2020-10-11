@@ -35,8 +35,7 @@ object MyStreamingApp {
         .load()
         .selectExpr("CAST(value AS STRING)").as[String]
 
-      val counts = sentences.flatMap(splitSentenceIntoWords)
-        .groupBy("value").count().sort(desc("count"))
+      /*val counts = ???
 
       val query = counts.writeStream
         .outputMode(OutputMode.Complete())
@@ -44,13 +43,10 @@ object MyStreamingApp {
         .trigger(Trigger.ProcessingTime("30 seconds"))
         .start()
 
-      query.awaitTermination()
+      query.awaitTermination()*/
     } catch {
       case e: Exception => logger.error(s"$jobName error in main", e)
     }
-  }
-  def splitSentenceIntoWords(sentence: String): Array[String] = {
-    sentence.split(" ").map(word => word.toLowerCase.replaceAll("[^a-z]", ""))
   }
 
 }
