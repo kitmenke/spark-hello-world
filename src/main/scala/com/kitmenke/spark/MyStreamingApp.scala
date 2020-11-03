@@ -14,13 +14,12 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 object MyStreamingApp {
   lazy val logger: Logger = Logger.getLogger(this.getClass)
   val jobName = "MyStreamingApp"
-  // TODO: define the schema for parsing data from Kafka
-  val schema: StructType = ???
 
   def main(args: Array[String]): Unit = {
     try {
       val spark = SparkSession.builder().appName(jobName).master("local[*]").getOrCreate()
-      val bootstrapServers = args(0)
+      // TODO: change bootstrap servers to your kafka brokers
+      val bootstrapServers = "localhost:9092"
       val df = spark
         .readStream
         .format("kafka")
@@ -34,7 +33,7 @@ object MyStreamingApp {
       val out = compute(df)
 
       val query = out.writeStream
-        .outputMode(OutputMode.Complete())
+        .outputMode(OutputMode.Append())
         .format("console")
         .trigger(Trigger.ProcessingTime("5 seconds"))
         .start()

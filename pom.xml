@@ -126,6 +126,12 @@
             <artifactId>spark-sql-kafka-0-10_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
+        <!-- OPTIONAL: HBase dependency (only used if you want to read from HBase) -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>2.2.3</version>
+        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.scalatest</groupId>

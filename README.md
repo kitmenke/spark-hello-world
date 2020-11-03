@@ -12,44 +12,39 @@ git clone https://github.com/kitmenke/spark-hello-world.git
 
 Open the project in IntelliJ:
 
- 1. From the IntelliJ splash screen, click IMPORT (not open)
- 1. Navigate to the spark-hello-world/pom.xml and double click it
- 1. Click next
- 1. Click next
- 1. Click next
- 1. Make sure JDK 1.8 is selected. If it is not, click the green plus and add it. Then click next.
- 1. Click finish
+ 1. From the IntelliJ splash screen, click open
+ 1. Navigate to the `spark-hello-world/pom.xml` and double click it
+ 1. When prompted, choose **Open as Project**
  
-Give IntelliJ a few minutes to download all of the project dependencies. You'll see the progress bar in the bottom right going crazy.
+Give IntelliJ a few minutes to download the project's dependencies. You'll see the progress bar in the bottom right loading.
 
 # Running the Structured Streaming App
 
-The structured streaming app requires a Kafka cluster. The data on the topic is from the [Amazon Customer Reviews Dataset](https://registry.opendata.aws/amazon-reviews/)
-and looks like the following example:
+Open up `MyStreamingApp.scala` from src/main/scala/com/kitmenke/spark. 
 
-```json
-{
-  "marketplace": "US",
-  "customer_id": 1,
-  "review_id": "R26ZK6XLDT8DDS",
-  "product_id": "B000L70MQO",
-  "product_parent": 216773674,
-  "product_title": "Product 1",
-  "product_category": "Toys",
-  "star_rating": 5,
-  "helpful_votes": 1,
-  "total_votes": 4,
-  "vine": "N",
-  "verified_purchase": "Y",
-  "review_headline": "Five Stars",
-  "review_body": "Cool.",
-  "review_date": "2015-01-12T00:00:00.000-06:00"
-}
+The structured streaming app requires a Kafka cluster, so first plug in a value for bootstrapServers. 
+
+The app should read data from the `reviews` topic which is tab-separated and has the following fields:
+
+```
+marketplace string, 
+customer_id string, 
+review_id string, 
+product_id string, 
+product_parent string, 
+product_title string, 
+product_category string,
+star_rating int, 
+helpful_votes int, 
+total_votes int, 
+vine string, 
+verified_purchase string, 
+review_headline string, 
+review_body string, 
+review_date string
 ```
 
-Open up MyStreamingApp.scala from src/main/scala/com/kitmenke/spark.
-
-You will need to specify the Kafka bootstrap servers as the first argument.
+Then, you can click the green arrow next to the class name to run the app.
 
 # Running the Batch App
 

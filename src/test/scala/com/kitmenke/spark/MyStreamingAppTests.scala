@@ -49,7 +49,7 @@ class MyStreamingAppTests extends FunSuite with DataFrameSuiteBase {
     val rdd = sc.parallelize(Seq(
       Row("row1", "XFH"),
       Row("row2", "ABC"),
-      Row("row3", "XFH"),
+      Row("row3", "XFH")
     ))
     val df = sqlContext.createDataFrame(rdd, schema)
     df.show()
@@ -66,7 +66,7 @@ class MyStreamingAppTests extends FunSuite with DataFrameSuiteBase {
     val rdd1 = sc.parallelize(Seq(
       Row("a1", "b1"),
       Row("a2", "b2"),
-      Row("a3", "b3"),
+      Row("a3", "b3")
     ))
     val df1 = sqlContext.createDataFrame(rdd1, schema1)
     val schema2 = new StructType()
