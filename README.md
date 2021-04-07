@@ -1,5 +1,5 @@
 # spark-hello-world
-An example Spark 2.4.5 application written in Scala and setup using Maven.
+An example Spark 3.0.1 application written in Scala and setup using Maven.
 
 # Getting Started
 
