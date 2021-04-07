@@ -10,10 +10,14 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <!--
+        The versions of java, scala and spark must be kept in sync. You can reference the Spark documentation
+        to understand what versions work together: https://spark.apache.org/docs/latest/index.html
+        -->
         <jdk.version>1.8</jdk.version>
         <scala.compat.version>2.12</scala.compat.version>
         <scala.version>2.12.10</scala.version>
-        <spark.version>2.4.5</spark.version>
+        <spark.version>3.0.1</spark.version>
     </properties>
 
     <build>
@@ -32,7 +36,7 @@
                 <!-- Enable the scala maven plugin, see https://github.com/davidB/scala-maven-plugin for more info -->
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>4.3.1</version>
+                <version>4.4.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -42,7 +46,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Plugin used to create an Uber jar -->
+            <!-- Plugin used to create an Uber jar. Useful when you're deploying your application to a cluster. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -148,7 +152,7 @@
         <dependency>
             <groupId>com.holdenkarau</groupId>
             <artifactId>spark-testing-base_${scala.compat.version}</artifactId>
-            <version>${spark.version}_0.14.0</version>
+            <version>${spark.version}_1.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

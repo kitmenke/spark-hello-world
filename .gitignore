@@ -1,6 +1,6 @@
 # Kit excluding entire .idea folder
 .idea
-
+*.iml
 # Created by https://www.gitignore.io/api/maven,scala,intellij
 
 ### Intellij ###
