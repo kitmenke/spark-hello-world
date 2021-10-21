@@ -4,6 +4,17 @@ An example python pyspark Structured Streaming app with unit tests.
 
 - Must have Java 8 installed. *Java 11 will not work*.
 - Must have spark 2.4.5 installed ( https://spark.apache.org/downloads.html )
+- Must have python 3.7 installed (instructions below using virtualenv and virtualenvwrapper)
+
+Installing on Ubuntu 20.04
+```
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install python3.7 python3.7-dev
+mkvirtualenv pyspark3.7 --python python3.7
+cd spark-hello-world/python
+workon pyspark3.7
+pip install -r requirements.txt
+```
 
 Set SPARK_HOME environment variable to where Spark is installed on your machine
 

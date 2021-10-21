@@ -119,11 +119,11 @@
             <artifactId>spark-sql_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- Streaming dependencies -->
         <dependency>
             <groupId>org.apache.spark</groupId>
