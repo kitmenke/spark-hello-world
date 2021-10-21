@@ -5,7 +5,18 @@ An example Spark 3.0.1 application written in Scala and setup using Maven.
 
 Make sure you have JDK 1.8 installed. I recommend also installing an IDE like IntelliJ (the following will be IntelliJ specific).
 
-To start, clone this repo to your PC:
+To start, clone this repo to your PC and open it in Intellij. Give IntelliJ a few minutes to download the project's 
+dependencies. You'll see the progress bar in the bottom right loading.
+
+You clone the repo using one of the following two ways.
+
+## Option 1: Directly from Intellij
+
+In Intellij, go to File -> New -> Project from Version Control and paste in `https://github.com/kitmenke/spark-hello-world.git`
+
+## Option 2: Command line
+
+Using the git CLI
 ```
 git clone https://github.com/kitmenke/spark-hello-world.git
 ```
@@ -15,8 +26,6 @@ Open the project in IntelliJ:
  1. From the IntelliJ splash screen, click open
  1. Navigate to the `spark-hello-world/pom.xml` and double click it
  1. When prompted, choose **Open as Project**
- 
-Give IntelliJ a few minutes to download the project's dependencies. You'll see the progress bar in the bottom right loading.
 
 # Running the Structured Streaming App
 
