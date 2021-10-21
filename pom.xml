@@ -137,22 +137,6 @@
             <artifactId>hbase-client</artifactId>
             <version>2.2.3</version>
         </dependency>
-        <!-- OPTIONAL Cassandra dependency (integration tests) -->
-        <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-core</artifactId>
-            <version>3.7.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>4.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-jmx</artifactId>
-            <version>4.1.1</version>
-        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.scalatest</groupId>
@@ -170,19 +154,6 @@
             <groupId>com.holdenkarau</groupId>
             <artifactId>spark-testing-base_${scala.compat.version}</artifactId>
             <version>${spark.version}_1.0.0</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- Integration test dependencies -->
-        <dependency>
-            <groupId>com.dimafeng</groupId>
-            <artifactId>testcontainers-scala-scalatest_${scala.compat.version}</artifactId>
-            <version>${testcontainersscala.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.dimafeng</groupId>
-            <artifactId>testcontainers-scala-cassandra_${scala.compat.version}</artifactId>
-            <version>${testcontainersscala.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
