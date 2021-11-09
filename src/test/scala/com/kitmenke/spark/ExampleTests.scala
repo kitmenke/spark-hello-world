@@ -8,6 +8,8 @@ import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.{ArrayType, IntegerType, StringType, StructType}
 import org.scalatest.FunSuite
 
+case class ExampleData(col_a: Int, col_b: Int, col_c: String)
+
 class ExampleTests extends FunSuite with DataFrameSuiteBase {
   import sqlContext.implicits._
 
@@ -43,6 +45,36 @@ class ExampleTests extends FunSuite with DataFrameSuiteBase {
     result.show()
   }
 
+  test("can create a dataframe using a case class instead of using a schema") {
+    // note: case class must be defined OUTSIDE of this test and test class otherwise
+    // you will have issues with serialization
+    val rdd = sc.parallelize(Seq(
+      ExampleData(1, 2, "cat"),
+      ExampleData(2, 4, "dog"),
+      ExampleData(3, 6, "elephant")
+    ))
+    val df = sqlContext.createDataFrame(rdd)
+    df.printSchema()
+    df.show()
+  }
+
+  test("should filter with multiple conditions") {
+    val schema = new StructType()
+      .add("col_a", IntegerType, nullable = true)
+      .add("col_b", IntegerType, nullable = true)
+      .add("col_c", StringType, nullable = true)
+    // create some sample data to run through our program
+    val rdd = sc.parallelize(Seq(
+      Row(1, 2, "cat"),
+      Row(2, 4, "dog"),
+      Row(3, 6, "elephant")
+    ))
+    val df = sqlContext.createDataFrame(rdd, schema)
+    df.printSchema()
+    val result = df.filter(df("col_a") >= 2 && df("col_b") <= 4)
+    result.show()
+  }
+
   test("should drop duplicates") {
     val schema = new StructType()
       .add("row", StringType, nullable = false)
@@ -54,6 +86,10 @@ class ExampleTests extends FunSuite with DataFrameSuiteBase {
       Row("row3", "XFH")
     ))
     val df = sqlContext.createDataFrame(rdd, schema)
+    df.printSchema()
+    println(df.columns.toList)
+
+
     df.show()
     val result = df.dropDuplicates("code")
     result.printSchema()
