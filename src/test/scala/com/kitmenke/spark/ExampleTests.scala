@@ -1,14 +1,15 @@
 package com.kitmenke.spark
 
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
-import org.apache.spark.sql
-import org.apache.spark.sql.Row
+import org.apache.spark.{TaskContext, sql}
+import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.{ArrayType, IntegerType, StringType, StructType}
 import org.scalatest.FunSuite
 
 case class ExampleData(col_a: Int, col_b: Int, col_c: String)
+case class Thing(name: String, category: String)
 
 class ExampleTests extends FunSuite with DataFrameSuiteBase {
   import sqlContext.implicits._
@@ -172,5 +173,26 @@ class ExampleTests extends FunSuite with DataFrameSuiteBase {
 
     result.printSchema()
     result.show()
+  }
+
+  test("map partition illustration") {
+    // create some sample data to run through our program
+    val rdd = sc.parallelize(Seq(
+      Thing("Cat", "Animal"),
+      Thing("Dog", "Animal"),
+      Thing("Potato", "Vegetable"),
+      Thing("Bat", "Animal"),
+      Thing("Strawberry", "Fruit"),
+      Thing("Fox", "Animal")
+    ))
+    val ds = sqlContext.createDataFrame(rdd).as[Thing]
+    ds.show()
+    val result: Dataset[String] = ds.repartition(ds("category")).mapPartitions(partition => {
+      val partitionId = TaskContext.getPartitionId()
+      partition.map(row => {
+        s"Hello from partition #${partitionId}! A ${row.name} is a ${row.category}"
+      })
+    })
+    result.show(truncate = false)
   }
 }
