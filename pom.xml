@@ -18,6 +18,7 @@
         <scala.compat.version>2.12</scala.compat.version>
         <scala.version>2.12.10</scala.version>
         <spark.version>3.0.1</spark.version>
+        <log4j.version>2.18.0</log4j.version>
     </properties>
 
     <build>
@@ -36,7 +37,7 @@
                 <!-- Enable the scala maven plugin, see https://github.com/davidB/scala-maven-plugin for more info -->
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>4.4.1</version>
+                <version>4.7.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -50,7 +51,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <keepDependenciesWithProvidedScope>false</keepDependenciesWithProvidedScope>
@@ -74,7 +75,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.0.0-M7</version>
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
@@ -83,7 +84,7 @@
             <plugin>
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest-maven-plugin</artifactId>
-                <version>1.0</version>
+                <version>2.1.0</version>
                 <configuration>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <junitxml>.</junitxml>
@@ -113,6 +114,13 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${scala.compat.version}</artifactId>
             <version>${spark.version}</version>
+            <exclusions>
+                <!-- Exclude log4j to avoid importing vulnerable versions -->
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
@@ -135,6 +143,13 @@
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
             <version>2.2.3</version>
+            <exclusions>
+                <!-- Exclude log4j to avoid importing vulnerable versions -->
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Test dependencies -->
         <dependency>
@@ -154,6 +169,30 @@
             <artifactId>spark-testing-base_${scala.compat.version}</artifactId>
             <version>${spark.version}_1.0.0</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Exclude log4j to avoid importing vulnerable versions -->
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Logging Dependencies -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!-- For backwards compatibility, many transitive dependencies use an old log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,16 +1,17 @@
 package com.kitmenke.spark
 
-import org.apache.log4j.Logger
+import org.apache.logging.log4j.{LogManager, Logger}
 import org.apache.spark.sql.SparkSession
 
 /**
  * A batch application that takes a hard-coded list of strings and counts the words.
  */
 object MyBatchApp {
-  lazy val logger: Logger = Logger.getLogger(this.getClass)
+  lazy val logger: Logger = LogManager.getLogger(this.getClass)
   val jobName = "MyBatchApp"
 
   def main(args: Array[String]): Unit = {
+    logger.info(s"$jobName starting")
     val sentences = Seq(
       "Space.",
       "The final frontier.",
@@ -36,10 +37,12 @@ object MyBatchApp {
         .map(word => (word, 1))
         .reduceByKey(_ + _)
         .sortBy(t => t._2, ascending = false)
-      counts.collect().foreach(println)
+      val output = counts.collect().mkString("\n")
+      logger.info("Counts are: " + output)
     } catch {
       case e: Exception => logger.error(s"$jobName error in main", e)
     }
+    logger.info(s"$jobName finished")
   }
 
   def splitSentenceIntoWords(sentence: String): Array[String] = {
