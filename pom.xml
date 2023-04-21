@@ -17,7 +17,7 @@
         <jdk.version>1.8</jdk.version>
         <scala.compat.version>2.12</scala.compat.version>
         <scala.version>2.12.10</scala.version>
-        <spark.version>3.0.1</spark.version>
+        <spark.version>3.4.0</spark.version>
         <log4j.version>2.18.0</log4j.version>
     </properties>
 
